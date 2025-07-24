@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Review</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1a1a 50%, #000000 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .review-container {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 255, 127, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(0, 255, 127, 0.2);
+        }
+
+        .review-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .review-header h1 {
+            color: #00ff7f;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00ff7f, #00cc66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 255, 127, 0.3);
+        }
+
+        .review-header p {
+            color: #b0b0b0;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #e0e0e0;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #333;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(40, 40, 40, 0.9);
+            color: #e0e0e0;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #00ff7f;
+            box-shadow: 0 0 0 3px rgba(0, 255, 127, 0.1);
+            background: rgba(50, 50, 50, 1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #888;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00ff7f 0%, #00cc66 100%);
+            color: #000;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 255, 127, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 127, 0.4);
+            background: linear-gradient(135deg, #00cc66 0%, #00ff7f 100%);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .required {
+            color: #00ff7f;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .review-container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .review-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 12px 15px;
+            }
+        }
+
+        /* Loading state for form submission */
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success message styling */
+        .success-message {
+            background: linear-gradient(135deg, #00ff7f, #00cc66);
+            color: #000;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* Error message styling */
+        .error-message {
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="review-container">
+        <div class="review-header">
+            <h1>Submit Your Review</h1>
+            <p>We'd love to hear about your experience</p>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message">
+            Thank you for your review! We appreciate your feedback.
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message">
+            Please fill in all required fields correctly.
+        </div>
+
+        <!-- Django Form -->
+        <form id="reviewForm" method="POST" action="/review">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="name">Full Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email address">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-group">
+                <label for="drc">Your Review <span class="required">*</span></label>
+                <textarea id="drc" name="drc" required placeholder="Share your experience with us..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Submit Review
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Form submission handling
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // Hide previous messages
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            // Disable submit button during submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Basic form validation
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const reviewText = document.getElementById('review_text').value.trim();
+            
+            if (!name || !email || !phone || !reviewText) {
+                e.preventDefault();
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                errorMsg.textContent = 'Please enter a valid email address.';
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
+                return;
+            }
+            
+            // Phone validation (basic)
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+                e.preventDefault();
+                errorMsg.textContent = 'Please enter a valid phone number.';
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
+                return;
+            }
+            
+            // If validation passes, the form will submit normally to Django
+            // You can add AJAX submission here if needed
+        });
+
+        // Input animations
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
